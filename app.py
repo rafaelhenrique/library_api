@@ -53,10 +53,10 @@ def search_book(book_id):
 
 @app.route('/v1/books/<int:book_id>', methods=['GET'])
 def get_book(book_id):
-    book = [book for book in db_books if book['id'] == book_id]
-    if len(book) == 0:
+    book = search_book(book_id)
+    if not book:
         abort(404)
-    return jsonify(book[0])
+    return jsonify(book)
 
 
 @app.route('/v1/books', methods=['POST'])
@@ -76,10 +76,10 @@ def create_book():
 
 @app.route('/v1/books/<int:book_id>', methods=['PUT'])
 def update_book(book_id):
-    book = [book for book in db_books if book['id'] == book_id]
+    book = search_book(book_id)
 
     # basic validations
-    if len(book) == 0:
+    if not book:
         abort(404)
     if not request.json:
         abort(400)
@@ -95,16 +95,17 @@ def update_book(book_id):
     if ('authors' in request.json and not isinstance(request.json['authors'], list)):
         abort(400)
 
-    book[0].update(**request.json)
-    return jsonify(book[0])
+    book.update(**request.json)
+    return jsonify(book)
 
 
 @app.route('/v1/books/<int:book_id>', methods=['DELETE'])
 def delete_book(book_id):
-    book = [book for book in db_books if book['id'] == book_id]
-    if len(book) == 0:
+    book = search_book(book_id)
+    if not book:
         abort(404)
-    db_books.remove(book[0])
+
+    db_books.remove(book)
     return ('', 200)
 
 if __name__ == '__main__':
