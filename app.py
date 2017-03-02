@@ -43,6 +43,14 @@ def get_books():
     return jsonify(books)
 
 
+def search_book(book_id):
+    """Find books by id in db_books"""
+    for book in db_books:
+        if book['id'] == book_id:
+            return book
+    return None
+
+
 @app.route('/v1/books/<int:book_id>', methods=['GET'])
 def get_book(book_id):
     book = [book for book in db_books if book['id'] == book_id]
