@@ -40,7 +40,7 @@ def not_found(error):
 @app.route('/v1/books', methods=['GET'])
 def get_books():
     books = {'total': len(db_books), 'objects': db_books}
-    return jsonify(books)
+    return jsonify(books), 200
 
 
 def search_book(book_id):
@@ -56,7 +56,7 @@ def get_book(book_id):
     book = search_book(book_id)
     if not book:
         abort(404)
-    return jsonify(book)
+    return jsonify(book), 200
 
 
 @app.route('/v1/books', methods=['POST'])
@@ -96,7 +96,7 @@ def update_book(book_id):
         abort(400)
 
     book.update(**request.json)
-    return jsonify(book)
+    return jsonify(book), 200
 
 
 @app.route('/v1/books/<int:book_id>', methods=['DELETE'])
@@ -106,7 +106,8 @@ def delete_book(book_id):
         abort(404)
 
     db_books.remove(book)
-    return ('', 200)
+    return ('', 204)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
